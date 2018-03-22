@@ -5,6 +5,34 @@ import requests
 import json
 import os
 
+MIN_THROTTLE = 0
+MAX_THROTTLE = 1
+MIN_SPEED = 0
+MAX_SPEED = 60
+
+def calculateSpeed(throttle):
+    throttleRange = (MAX_THROTTLE - MIN_THROTTLE)
+    if throttleRange == 0:
+        speed = MIN_SPEED
+    else:
+        speedRange = (MAX_SPEED - MIN_SPEED)  
+        speed = (((throttle - MIN_THROTTLE) * speedRange) / throttleRange) + MIN_SPEED
+    return speed
+
+def getTimeToStop(speed, distance):
+    timeToStop = 1 / (speed * 5280/3600 / distance)
+    return timeToStop
+
+def getRating(timeToStop):
+    rating = 0
+    if(timeToStop >4):
+        rating = 100
+    else:
+        rating = timeToStop*25
+    print('rating= ', rating)
+    return rating
+
+
 def getThrottleSpeed():
     maxValue = -1
     path_to_tub_folders = os.path.dirname(
@@ -47,6 +75,7 @@ def getThrottleSpeed():
     return data
 
 
+
 headers = {'content-type': 'application/json'}
 url = 'http://codejam.zrimsek.com/api/stats'
 
@@ -79,12 +108,15 @@ while True:
     distance = round(distance, 2)
     print("Distance:", distance, "cm")
     timeString = datetime.datetime.now().isoformat()
-    maxThrottleSpeed = '-10'
-    while maxThrottleSpeed == '-10':
-        maxThrottleSpeed = getThrottleSpeed()
+    throttleValue = '-10'
+    while throttleValue == '-10':
+        throttleValue = getThrottleSpeed()
+    speed = calculateSpeed(abs(throttleValue))
+    rating = getRating(getTimeToStop(speed,distance)) 
     data = {
         'distance': distance,
-        'speed': maxThrottleSpeed,
-        'time': timeString
+        'speed': speed,
+        'time': timeString,
+        'rating': rating
     }
     requests.post(url, data=json.dumps(data), headers=headers)
