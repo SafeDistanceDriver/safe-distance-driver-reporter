@@ -7,7 +7,7 @@ import json
 import os
 
 
-def getFilePath():
+def getThrottleSpeed():
         maxValue = -1
         path_to_tub_folders = os.path.dirname(os.path.realpath(__file__)) + '/data/'
         maxFolder = ''
@@ -38,10 +38,9 @@ def getFilePath():
         json_data = open(path_to_data).read()
 
         data = json.loads(json_data)
-        print data["user/throttle"]
+        print("speed=",data["user/throttle"])
         return data["user/throttle"]
 
-        
 headers = {'content-type': 'application/json'}
 url = 'http://codejam.zrimsek.com/api/stats'
 
@@ -50,16 +49,16 @@ GPIO.setmode(GPIO.BCM)
 
 TRIG = 23
 
-print "Distance Measurement in Progress"
+print("Distance Measurement in Progress")
 GPIO.setup(TRIG,GPIO.OUT)
 GPIO.output(TRIG,False)
-print "Waiting for sensor to settle"
+print("Waiting for sensor to settle")
 time.sleep(1)
 
 while True:
-        print "Distance Measurement in Progress"
+        print("Distance Measurement in Progress")
         GPIO.setup(TRIG,GPIO.OUT)
-        print "Waiting for sensor to settle"
+        print("Waiting for sensor to settle")
         time.sleep(.1)
         GPIO.output(TRIG,True)
         time.sleep(0.00001)
@@ -72,9 +71,9 @@ while True:
         pulse_duration = pulse_end - pulse_start
         distance = pulse_duration * 17150
         distance = round(distance, 2)
-        print "Distance:",distance,"cm"
+        print("Distance:",distance,"cm")
         timeString = datetime.datetime.now().isoformat()
-        maxThrottleSpeed = getFilePath()
+        maxThrottleSpeed = getThrottleSpeed()
         data = {'distance': distance, 'speed': maxThrottleSpeed, 'time': timeString}
         requests.post(url, data=json.dumps(data), headers=headers)
 
