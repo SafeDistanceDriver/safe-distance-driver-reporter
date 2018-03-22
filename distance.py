@@ -20,6 +20,8 @@ def calculateSpeed(throttle):
     return speed
 
 def getTimeToStop(speed, distance):
+    if(speed == 0):
+        speed = 0.01
     timeToStop = 1 / (speed * 5280/3600 / distance)
     return timeToStop
 
