@@ -67,7 +67,8 @@ def getThrottleSpeed():
                 maxJsonFile = name
             else:
                 os.remove(path_to_json + name)
-                
+        else:
+            os.remove(path_to_json + name)
     path_to_data = path_to_json + maxJsonFile
     data = '-10'
     if (os.stat(path_to_data).st_size > 0):
