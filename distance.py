@@ -35,11 +35,14 @@ def getThrottleSpeed():
                         maxJsonFile = name
 
         path_to_data = path_to_json + maxJsonFile
-        json_data = open(path_to_data).read()
+        data = '-10'
+        if(os.stat(path_to_data).st_size > 0):
+                json_data = open(path_to_data).read()
+                data = json.loads(json_data)
+                data = data["user/throttle"]
 
-        data = json.loads(json_data)
-        print("speed=",data["user/throttle"])
-        return data["user/throttle"]
+        print("speed=",data)
+        return data
 
 headers = {'content-type': 'application/json'}
 url = 'http://codejam.zrimsek.com/api/stats'
@@ -73,7 +76,9 @@ while True:
         distance = round(distance, 2)
         print("Distance:",distance,"cm")
         timeString = datetime.datetime.now().isoformat()
-        maxThrottleSpeed = getThrottleSpeed()
+        maxThrottleSpeed = '-10'
+        while maxThrottleSpeed == '-10':
+                maxThrottleSpeed = getThrottleSpeed()
         data = {'distance': distance, 'speed': maxThrottleSpeed, 'time': timeString}
         requests.post(url, data=json.dumps(data), headers=headers)
 
