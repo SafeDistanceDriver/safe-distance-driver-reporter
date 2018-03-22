@@ -61,9 +61,13 @@ def getThrottleSpeed():
             startIndex = name.find('_')
             currentValue = int(name[startIndex + 1:-5])
             if (currentValue > maxJsonValue):
+                if(maxJsonFile != ''):
+                    os.remove(path_to_json + maxJsonFile)
                 maxJsonValue = currentValue
                 maxJsonFile = name
-
+            else:
+                os.remove(path_to_json + name)
+                
     path_to_data = path_to_json + maxJsonFile
     data = '-10'
     if (os.stat(path_to_data).st_size > 0):
@@ -74,7 +78,7 @@ def getThrottleSpeed():
     #print("speed=", data)
     return data
 
-
+getThrottleSpeed()
 
 headers = {'content-type': 'application/json'}
 url = 'http://codejam.zrimsek.com/api/stats'
