@@ -119,5 +119,5 @@ while True:
         'time': timeString,
         'rating': rating
     }
-    print("distance: " + str(distance) + "\tspeed: " + str(speed) + "\trating: " + str(rating))
+    print("distance: " + str(distance) + "\t\tspeed: " + str(speed) + "\t\trating: " + str(rating))
     requests.post(url, data=json.dumps(data), headers=headers)
