@@ -1,14 +1,18 @@
-import RPi.GPIO as GPIO
-import time
 import datetime
-import requests
 import json
 import os
+import time
 
+import requests
+
+import RPi.GPIO as GPIO
+
+# Constants
 MIN_THROTTLE = 0
 MAX_THROTTLE = 1
 MIN_SPEED = 0
 MAX_SPEED = 60
+
 lastValue = 0
 
 
@@ -36,7 +40,6 @@ def getRating(timeToStop):
         rating = 100
     else:
         rating = timeToStop*25
-    #print('rating= ', rating)
     return rating
 
 
@@ -63,16 +66,12 @@ GPIO.setmode(GPIO.BCM)
 
 TRIG = 23
 
-#print("Distance Measurement in Progress")
 GPIO.setup(TRIG, GPIO.OUT)
 GPIO.output(TRIG, False)
-#print("Waiting for sensor to settle")
 time.sleep(1)
 
 while True:
-    #print("Distance Measurement in Progress")
     GPIO.setup(TRIG, GPIO.OUT)
-    #print("Waiting for sensor to settle")
     time.sleep(.1)
     GPIO.output(TRIG, True)
     time.sleep(0.00001)
@@ -85,7 +84,6 @@ while True:
     pulse_duration = pulse_end - pulse_start
     distance = pulse_duration * 17150
     distance = round(distance, 2)
-    #print("Distance:", distance, "cm")
     timeString = datetime.datetime.now().isoformat()
     throttleValue = '-10'
     while throttleValue == '-10':
