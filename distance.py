@@ -108,7 +108,7 @@ def startDataCollection():
             str(distance) + "\tspeed: " + \
             str(speed) + "\trating: " + str(rating)
         print(output.expandtabs(10))
-        requests.post(API_URL, data=json.dumps(data), API_HEADER=API_HEADER)
+        requests.post(API_URL, data=json.dumps(data), headers=API_HEADER)
 
 
 startDataCollection()
