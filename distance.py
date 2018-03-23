@@ -11,14 +11,17 @@ MIN_SPEED = 0
 MAX_SPEED = 60
 lastValue = 0
 
+
 def calculateSpeed(throttle):
     throttleRange = (MAX_THROTTLE - MIN_THROTTLE)
     if throttleRange == 0:
         speed = MIN_SPEED
     else:
-        speedRange = (MAX_SPEED - MIN_SPEED)  
-        speed = (((throttle - MIN_THROTTLE) * speedRange) / throttleRange) + MIN_SPEED
+        speedRange = (MAX_SPEED - MIN_SPEED)
+        speed = (((throttle - MIN_THROTTLE) * speedRange) /
+                 throttleRange) + MIN_SPEED
     return speed
+
 
 def getTimeToStop(speed, distance):
     if(speed == 0):
@@ -26,9 +29,10 @@ def getTimeToStop(speed, distance):
     timeToStop = 1 / (speed * 5280/3600 / distance)
     return timeToStop
 
+
 def getRating(timeToStop):
     rating = 0
-    if(timeToStop >4):
+    if(timeToStop > 4):
         rating = 100
     else:
         rating = timeToStop*25
@@ -50,6 +54,7 @@ def getThrottleSpeed():
             lastValue = returnValue
     open(path_to_data, 'w').close()
     return returnValue
+
 
 headers = {'content-type': 'application/json'}
 url = 'http://codejam.zrimsek.com/api/stats'
@@ -86,12 +91,13 @@ while True:
     while throttleValue == '-10':
         throttleValue = getThrottleSpeed()
     speed = calculateSpeed(abs(throttleValue))
-    rating = getRating(getTimeToStop(speed,distance)) 
+    rating = getRating(getTimeToStop(speed, distance))
     data = {
         'distance': distance,
         'speed': speed,
         'time': timeString,
         'rating': rating
     }
-    print("distance: " + str(distance) + "\t\tspeed: " + str(speed) + "\t\trating: " + str(rating))
+    print("distance: " + str(distance) + "\t\tspeed: " +
+          str(speed) + "\t\trating: " + str(rating))
     requests.post(url, data=json.dumps(data), headers=headers)
