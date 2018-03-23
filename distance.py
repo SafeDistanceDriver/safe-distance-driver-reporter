@@ -10,7 +10,7 @@ import RPi.GPIO as GPIO
 
 # Constants
 TRIG_PIN = 23
-API_HEADER = {'throttleData-type': 'application/json'}
+API_HEADER = {'content-type': 'application/json'}
 API_URL = 'http://codejam.zrimsek.com/api/stats'
 MIN_THROTTLE = 0
 MAX_THROTTLE = 1
@@ -105,7 +105,13 @@ def startDataCollection():
             str(distance) + "\tspeed: " + \
             str(speed) + "\trating: " + str(rating)
         print(output.expandtabs(10))
-        body = {'distance': distance,'speed': speed,'time': timeString,'rating': rating}
+
+        body = {
+            'distance': distance,
+            'speed': speed,
+            'time': timeString,
+            'rating': rating
+        }
         requests.post(API_URL, data=json.dumps(body), headers=API_HEADER)
 
 startDataCollection()
