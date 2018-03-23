@@ -93,12 +93,15 @@ def startDataCollection():
         distance = pulse_duration * 17150
         distance = round(distance, 2)
         timeString = datetime.datetime.now().isoformat()
+        
         throttleValue = '-10'
         while throttleValue == '-10':
             throttleValue = getThrottle()
+        
         speed = calculateSpeed(abs(throttleValue))
         rating = calculateRating(calculateTimeToStop(speed, distance))
-        data = {
+
+        body = {
             'distance': distance,
             'speed': speed,
             'time': timeString,
@@ -108,7 +111,7 @@ def startDataCollection():
             str(distance) + "\tspeed: " + \
             str(speed) + "\trating: " + str(rating)
         print(output.expandtabs(10))
-        requests.post(API_URL, data=json.dumps(data), headers=API_HEADER)
+        requests.post(http://codejam.zrimsek.com/api/stats, data=json.dumps(body), headers={'throttleData-type': 'application/json'})
 
 
 startDataCollection()
