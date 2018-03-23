@@ -70,9 +70,9 @@ def getThrottle():
             throttle = float(line[startIndex + 1:-2])
             lastThrottle = throttle
 
-    # Clear file contents    
+    # Clear file contents
     open(pathToThrottleData, 'w').close()
-    
+
     return throttle
 
 
@@ -93,11 +93,11 @@ def startDataCollection():
         pulse_duration = pulse_end - pulse_start
         distance = pulse_duration * 17150
         distance = round(distance, 2)
-        
+
         # Get speed
         throttleValue = '-10'
         while throttleValue == '-10':
-            throttleValue = getThrottle() 
+            throttleValue = getThrottle()
         speed = calculateSpeed(abs(throttleValue))
 
         # Get time
@@ -120,5 +120,6 @@ def startDataCollection():
             'rating': rating
         }
         requests.post(API_URL, data=json.dumps(body), headers=API_HEADER)
+
 
 startDataCollection()
