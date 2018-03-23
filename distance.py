@@ -79,6 +79,7 @@ def getThrottle():
 def startDataCollection():
     time.sleep(1)
     while True:
+        # Get distance
         GPIO.setup(TRIG_PIN, GPIO.OUT)
         time.sleep(.1)
         GPIO.output(TRIG_PIN, True)
@@ -92,24 +93,30 @@ def startDataCollection():
         pulse_duration = pulse_end - pulse_start
         distance = pulse_duration * 17150
         distance = round(distance, 2)
-        timeString = datetime.datetime.now().isoformat()
         
+        # Get speed
         throttleValue = '-10'
         while throttleValue == '-10':
-            throttleValue = getThrottle()
-        
+            throttleValue = getThrottle() 
         speed = calculateSpeed(abs(throttleValue))
+
+        # Get time
+        time = datetime.datetime.now().isoformat()
+
+        # Get rating
         rating = calculateRating(calculateTimeToStop(speed, distance))
 
+        # Print data
         output = "distance: " + \
             str(distance) + "\tspeed: " + \
             str(speed) + "\trating: " + str(rating)
         print(output.expandtabs(10))
 
+        # Send to API
         body = {
             'distance': distance,
             'speed': speed,
-            'time': timeString,
+            'time': time,
             'rating': rating
         }
         requests.post(API_URL, data=json.dumps(body), headers=API_HEADER)
