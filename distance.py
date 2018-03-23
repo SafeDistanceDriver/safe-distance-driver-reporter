@@ -30,6 +30,22 @@ GPIO.setup(TRIG_PIN, GPIO.OUT)
 GPIO.output(TRIG_PIN, False)
 
 
+def getDistance():
+    GPIO.setup(TRIG_PIN, GPIO.OUT)
+    time.sleep(.1)
+    GPIO.output(TRIG_PIN, True)
+    time.sleep(0.00001)
+    GPIO.output(TRIG_PIN, False)
+    GPIO.setup(TRIG_PIN, GPIO.IN)
+    while GPIO.input(TRIG_PIN) == 0:
+        pulse_start = time.time()
+    while GPIO.input(TRIG_PIN) == 1:
+        pulse_end = time.time()
+    pulse_duration = pulse_end - pulse_start
+    distance = pulse_duration * 17150
+    return round(distance, ROUND_DISTANCE)
+
+
 def calculateSpeed(throttle):
     throttleRange = (MAX_THROTTLE - MIN_THROTTLE)
     if throttleRange == 0:
@@ -83,19 +99,7 @@ def startDataCollection():
     time.sleep(1)
     while True:
         # Get distance
-        GPIO.setup(TRIG_PIN, GPIO.OUT)
-        time.sleep(.1)
-        GPIO.output(TRIG_PIN, True)
-        time.sleep(0.00001)
-        GPIO.output(TRIG_PIN, False)
-        GPIO.setup(TRIG_PIN, GPIO.IN)
-        while GPIO.input(TRIG_PIN) == 0:
-            pulse_start = time.time()
-        while GPIO.input(TRIG_PIN) == 1:
-            pulse_end = time.time()
-        pulse_duration = pulse_end - pulse_start
-        distance = pulse_duration * 17150
-        distance = round(distance, ROUND_DISTANCE)
+        distance = getDistance()
 
         # Get speed
         throttleValue = '-10'
@@ -107,7 +111,8 @@ def startDataCollection():
         timeString = datetime.datetime.now().isoformat()
 
         # Get rating
-        rating = round(calculateRating(calculateTimeToStop(speed, distance)), ROUND_RATING)
+        rating = round(calculateRating(
+            calculateTimeToStop(speed, distance)), ROUND_RATING)
 
         # Print data
         output = "distance: " + \
