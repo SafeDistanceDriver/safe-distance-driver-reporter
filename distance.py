@@ -101,17 +101,11 @@ def startDataCollection():
         speed = calculateSpeed(abs(throttleValue))
         rating = calculateRating(calculateTimeToStop(speed, distance))
 
-        body = {
-            'distance': distance,
-            'speed': speed,
-            'time': timeString,
-            'rating': rating
-        }
         output = "distance: " + \
             str(distance) + "\tspeed: " + \
             str(speed) + "\trating: " + str(rating)
         print(output.expandtabs(10))
-        requests.post(http://codejam.zrimsek.com/api/stats, data=json.dumps(body), headers={'throttleData-type': 'application/json'})
-
+        body = {'distance': distance,'speed': speed,'time': timeString,'rating': rating}
+        requests.post(API_URL, data=json.dumps(body), headers=API_HEADER)
 
 startDataCollection()
