@@ -101,7 +101,7 @@ def startDataCollection():
         speed = calculateSpeed(abs(throttleValue))
 
         # Get time
-        time = datetime.datetime.now().isoformat()
+        timeString = datetime.datetime.now().isoformat()
 
         # Get rating
         rating = calculateRating(calculateTimeToStop(speed, distance))
@@ -116,7 +116,7 @@ def startDataCollection():
         body = {
             'distance': distance,
             'speed': speed,
-            'time': time,
+            'time': timeString,
             'rating': rating
         }
         requests.post(API_URL, data=json.dumps(body), headers=API_HEADER)
