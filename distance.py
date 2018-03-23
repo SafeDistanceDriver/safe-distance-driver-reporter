@@ -51,7 +51,6 @@ def getThrottleSpeed():
     open(path_to_data, 'w').close()
     return returnValue
 
-print(getThrottleSpeed())
 headers = {'content-type': 'application/json'}
 url = 'http://codejam.zrimsek.com/api/stats'
 GPIO.setwarnings(False)
