@@ -27,14 +27,14 @@ def calculateSpeed(throttle):
     return speed
 
 
-def getTimeToStop(speed, distance):
+def calculateTimeToStop(speed, distance):
     if(speed == 0):
-        speed = 0.01
+        speed = 0.001
     timeToStop = 1 / (speed * 5280/3600 / distance)
     return timeToStop
 
 
-def getRating(timeToStop):
+def calculateRating(timeToStop):
     rating = 0
     if(timeToStop > 4):
         rating = 100
@@ -89,7 +89,7 @@ while True:
     while throttleValue == '-10':
         throttleValue = getThrottleSpeed()
     speed = calculateSpeed(abs(throttleValue))
-    rating = getRating(getTimeToStop(speed, distance))
+    rating = calculateRating(calculateTimeToStop(speed, distance))
     data = {
         'distance': distance,
         'speed': speed,
