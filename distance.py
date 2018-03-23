@@ -9,6 +9,7 @@ MIN_THROTTLE = 0
 MAX_THROTTLE = 1
 MIN_SPEED = 0
 MAX_SPEED = 60
+lastValue = 0
 
 def calculateSpeed(throttle):
     throttleRange = (MAX_THROTTLE - MIN_THROTTLE)
@@ -34,8 +35,10 @@ def getRating(timeToStop):
     #print('rating= ', rating)
     return rating
 
+
 def getThrottleSpeed():
-    returnValue = 0.0
+    global lastValue
+    returnValue = lastValue
     path_to_data = os.path.dirname(
         os.path.realpath(__file__)) + '/throttle-data.txt'
     with open(path_to_data) as file:
@@ -44,9 +47,11 @@ def getThrottleSpeed():
         if(line.startswith('throttle ')):
             startIndex = line.find(' ')
             returnValue = float(line[startIndex + 1:-2])
+            lastValue = returnValue
     open(path_to_data, 'w').close()
     return returnValue
 
+print(getThrottleSpeed())
 headers = {'content-type': 'application/json'}
 url = 'http://codejam.zrimsek.com/api/stats'
 GPIO.setwarnings(False)
