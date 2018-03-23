@@ -9,24 +9,22 @@ import requests
 import RPi.GPIO as GPIO
 
 # Constants
+TRIG_PIN = 23
+API_HEADER = {'content-type': 'application/json'}
+API_URL = 'http://codejam.zrimsek.com/api/stats'
 MIN_THROTTLE = 0
 MAX_THROTTLE = 1
 MIN_SPEED = 0
 MAX_SPEED = 60
 
 # Global variables
-lastValue = 0
+lastThrottle = 0
 
 # GPIO setup
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
-TRIG = 23
-GPIO.setup(TRIG, GPIO.OUT)
-GPIO.output(TRIG, False)
-
-# API setup
-headers = {'content-type': 'application/json'}
-url = 'http://codejam.zrimsek.com/api/stats'
+GPIO.setup(TRIG_PIN, GPIO.OUT)
+GPIO.output(TRIG_PIN, False)
 
 
 def calculateSpeed(throttle):
@@ -57,33 +55,33 @@ def calculateRating(timeToStop):
 
 
 def getThrottleSpeed():
-    global lastValue
-    returnValue = lastValue
-    path_to_data = os.path.dirname(
+    global lastThrottle
+    throttle = lastThrottle
+    pathToThrottleData = os.path.dirname(
         os.path.realpath(__file__)) + '/throttle-data.txt'
-    with open(path_to_data) as file:
+    with open(pathToThrottleData) as file:
         content = file.readlines()
     for line in content:
         if(line.startswith('throttle ')):
             startIndex = line.find(' ')
-            returnValue = float(line[startIndex + 1:-2])
-            lastValue = returnValue
-    open(path_to_data, 'w').close()
-    return returnValue
+            throttle = float(line[startIndex + 1:-2])
+            lastThrottle = throttle
+    open(pathToThrottleData, 'w').close()
+    return throttle
 
 
 def startDataCollection():
     time.sleep(1)
     while True:
-        GPIO.setup(TRIG, GPIO.OUT)
+        GPIO.setup(TRIG_PIN, GPIO.OUT)
         time.sleep(.1)
-        GPIO.output(TRIG, True)
+        GPIO.output(TRIG_PIN, True)
         time.sleep(0.00001)
-        GPIO.output(TRIG, False)
-        GPIO.setup(TRIG, GPIO.IN)
-        while GPIO.input(TRIG) == 0:
+        GPIO.output(TRIG_PIN, False)
+        GPIO.setup(TRIG_PIN, GPIO.IN)
+        while GPIO.input(TRIG_PIN) == 0:
             pulse_start = time.time()
-        while GPIO.input(TRIG) == 1:
+        while GPIO.input(TRIG_PIN) == 1:
             pulse_end = time.time()
         pulse_duration = pulse_end - pulse_start
         distance = pulse_duration * 17150
@@ -104,7 +102,7 @@ def startDataCollection():
             str(distance) + "\tspeed: " + \
             str(speed) + "\trating: " + str(rating)
         print(output.expandtabs(10))
-        requests.post(url, data=json.dumps(data), headers=headers)
+        requests.post(API_URL, data=json.dumps(data), API_HEADER=API_HEADER)
 
 
 startDataCollection()
