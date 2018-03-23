@@ -98,13 +98,13 @@ def startDataCollection():
         throttleValue = '-10'
         while throttleValue == '-10':
             throttleValue = getThrottle()
-        speed = calculateSpeed(abs(throttleValue))
+        speed = round(calculateSpeed(abs(throttleValue)), 2)
 
         # Get time
         timeString = datetime.datetime.now().isoformat()
 
         # Get rating
-        rating = calculateRating(calculateTimeToStop(speed, distance))
+        rating = round(calculateRating(calculateTimeToStop(speed, distance)), 2)
 
         # Print data
         output = "distance: " + \
