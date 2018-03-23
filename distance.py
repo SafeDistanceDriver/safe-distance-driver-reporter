@@ -10,7 +10,7 @@ import RPi.GPIO as GPIO
 
 # Constants
 TRIG_PIN = 23
-API_HEADER = {'content-type': 'application/json'}
+API_HEADER = {'throttleData-type': 'application/json'}
 API_URL = 'http://codejam.zrimsek.com/api/stats'
 MIN_THROTTLE = 0
 MAX_THROTTLE = 1
@@ -54,19 +54,25 @@ def calculateRating(timeToStop):
     return rating
 
 
-def getThrottleSpeed():
+def getThrottle():
     global lastThrottle
     throttle = lastThrottle
+
+    # Grab throttle data
     pathToThrottleData = os.path.dirname(
         os.path.realpath(__file__)) + '/throttle-data.txt'
-    with open(pathToThrottleData) as file:
-        content = file.readlines()
-    for line in content:
+    with open(pathToThrottleData) as throttleFile:
+        throttleData = throttleFile.readlines()
+
+    for line in throttleData:
         if(line.startswith('throttle ')):
             startIndex = line.find(' ')
             throttle = float(line[startIndex + 1:-2])
             lastThrottle = throttle
+
+    # Clear file contents    
     open(pathToThrottleData, 'w').close()
+    
     return throttle
 
 
@@ -89,7 +95,7 @@ def startDataCollection():
         timeString = datetime.datetime.now().isoformat()
         throttleValue = '-10'
         while throttleValue == '-10':
-            throttleValue = getThrottleSpeed()
+            throttleValue = getThrottle()
         speed = calculateSpeed(abs(throttleValue))
         rating = calculateRating(calculateTimeToStop(speed, distance))
         data = {
