@@ -16,6 +16,9 @@ MIN_THROTTLE = 0
 MAX_THROTTLE = 1
 MIN_SPEED = 0
 MAX_SPEED = 60
+ROUND_DISTANCE = 1
+ROUND_SPEED = 1
+ROUND_RATING = 1
 
 # Global variables
 lastThrottle = 0
@@ -35,14 +38,14 @@ def calculateSpeed(throttle):
         speedRange = (MAX_SPEED - MIN_SPEED)
         speed = (((throttle - MIN_THROTTLE) * speedRange) /
                  throttleRange) + MIN_SPEED
-    return speed
+    return round(speed, ROUND_SPEED)
 
 
 def calculateTimeToStop(speed, distance):
     if(speed == 0):
         speed = 0.001
     timeToStop = 1 / (speed * 5280/3600 / distance)
-    return timeToStop
+    return round(timeToStop, 2)
 
 
 def calculateRating(timeToStop):
@@ -51,7 +54,7 @@ def calculateRating(timeToStop):
         rating = 100
     else:
         rating = timeToStop*25
-    return rating
+    return round(rating, ROUND_RATING)
 
 
 def getThrottle():
@@ -73,7 +76,7 @@ def getThrottle():
     # Clear file contents
     open(pathToThrottleData, 'w').close()
 
-    return throttle
+    return round(throttle, 2)
 
 
 def startDataCollection():
@@ -92,19 +95,19 @@ def startDataCollection():
             pulse_end = time.time()
         pulse_duration = pulse_end - pulse_start
         distance = pulse_duration * 17150
-        distance = round(distance, 2)
+        distance = round(distance, ROUND_DISTANCE)
 
         # Get speed
         throttleValue = '-10'
         while throttleValue == '-10':
             throttleValue = getThrottle()
-        speed = round(calculateSpeed(abs(throttleValue)), 2)
+        speed = round(calculateSpeed(abs(throttleValue)), ROUND_SPEED)
 
         # Get time
         timeString = datetime.datetime.now().isoformat()
 
         # Get rating
-        rating = round(calculateRating(calculateTimeToStop(speed, distance)), 2)
+        rating = round(calculateRating(calculateTimeToStop(speed, distance)), ROUND_RATING)
 
         # Print data
         output = "distance: " + \
